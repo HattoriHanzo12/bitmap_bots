@@ -1,0 +1,10 @@
+# Virtual environment
+venv/
+
+# Generated bot images
+*.png
+
+# Other common exclusions
+.DS_Store
+*.conf
+.env
