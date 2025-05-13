@@ -32,10 +32,10 @@
     <p>Enter your Bitmap number (block height) to generate and mint a unique bot!</p>
     <input type="number" id="blockHeight" placeholder="e.g., 800000" min="0">
     <button onclick="connectWallet()">Connect UniSat Wallet</button>
-    <button onclick="generateCat()" id="generateBtn" disabled>Generate Bot</button>
-    <button onclick="mintCat()" id="mintBtn" disabled>Mint as NFT</button>
+    <button onclick="generateBot()" id="generateBtn" disabled>Generate Bot</button>
+    <button onclick="mintBot()" id="mintBtn" disabled>Mint as NFT</button>
     <div id="status"></div>
-    <canvas id="catCanvas" width="300" height="300"></canvas>
+    <canvas id="botCanvas" width="300" height="300"></canvas>
 
     <script>
         const colors = {
@@ -61,31 +61,6 @@
                 }
             } else {
                 document.getElementById('status').innerText = 'Please install UniSat Wallet extension.';
-            }
-        }
-
-        async function verifyOwnership(blockHeight) {
-            if (!walletConnected) {
-                return false;
-            }
-            try {
-                const inscriptions = await window.unisat.getInscriptions();
-                console.log('User Inscriptions:', inscriptions);
-                const bitmapId = `${blockHeight}.bitmap`;
-                return inscriptions.some(inscription => {
-                    if (inscription.name) {
-                        if (inscription.name === bitmapId) return true;
-                        if (inscription.name === `bitmap:${blockHeight}`) return true;
-                    }
-                    if (inscription.metadata && typeof inscription.metadata.blockHeight !== 'undefined') {
-                        return inscription.metadata.blockHeight === blockHeight;
-                    }
-                    return false;
-                });
-            } catch (e) {
-                console.error('Error verifying ownership:', e);
-                document.getElementById('status').innerText = `Error verifying ownership: ${e.message}`;
-                return false;
             }
         }
 
@@ -131,17 +106,10 @@
             return Math.abs(hash).toString(16);
         }
 
-        async function generateCat() {
+        async function generateBot() {
             const blockHeight = parseInt(document.getElementById('blockHeight').value);
             if (isNaN(blockHeight) || blockHeight < 0) {
                 document.getElementById('status').innerText = 'Please enter a valid block height.';
-                return;
-            }
-
-            const ownsBitmap = await verifyOwnership(blockHeight);
-            if (!ownsBitmap) {
-                document.getElementById('status').innerText = `You do not own ${blockHeight}.bitmap. Please enter a Bitmap you own.`;
-                document.getElementById('mintBtn').disabled = true;
                 return;
             }
 
@@ -184,7 +152,7 @@
             const hasCollar = blockData.fees > 0.2;
             const earShapeUpright = blockData.timestamp % 2 === 0;
 
-            const canvas = document.getElementById('catCanvas');
+            const canvas = document.getElementById('botCanvas');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
@@ -274,7 +242,7 @@
             document.getElementById('mintBtn').disabled = false;
         }
 
-        async function mintCat() {
+        async function mintBot() {
             if (!walletConnected || !generatedImageData) {
                 document.getElementById('status').innerText = 'Please connect wallet and generate a bot first.';
                 return;
@@ -284,18 +252,14 @@
                 document.getElementById('status').innerText = 'Minting bot as NFT...';
 
                 const parentInscriptionId = `${currentBlockHeight}.bitmap`;
-                const appParentBitmap = "57,043.bitmap";
                 const inscriptionData = {
                     contentType: 'image/png',
                     content: generatedImageData,
                     parent: parentInscriptionId,
                     metadata: {
                         name: `Bitmap Bot #${currentBlockHeight}`,
-                        description: `A unique bot generated from Bitcoin block ${currentBlockHeight}, minted via the Bitmap Bots app inscribed on the Pizza Day Bitmap (57,043.bitmap).`,
-                        attributes: [
-                            { trait_type: "Block Height", value: currentBlockHeight },
-                            { trait_type: "App Provenance", value: appParentBitmap }
-                        ]
+                        description: `A unique bot generated from Bitcoin block ${currentBlockHeight}`,
+                        attributes: [{ trait_type: "Block Height", value: currentBlockHeight }]
                     }
                 };
 

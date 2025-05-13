@@ -4,7 +4,26 @@ venv/
 # Generated bot images
 *.png
 
-# Other common exclusions
+# macOS system files
 .DS_Store
+
+# Configuration and environment files
 *.conf
 .env
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VSCode settings and workspace files
+.vscode/
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+
+# Node.js dependencies (if applicable for future use)
+node_modules/
