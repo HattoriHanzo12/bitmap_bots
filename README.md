@@ -61,6 +61,9 @@ The "Mint as NFT" button attempts to mint the bot using window.unisat.inscribe, 
 
 Instead, download the bot image for manual inscription:
 Right-click the canvas and select "Save image as..." to download the bot as a PNG (e.g., bitmap-bot-1130.png).
+![Example](bot_1130.png)
+
+
 
 Proceed to the "Minting a Bot Manually" section below.
 
